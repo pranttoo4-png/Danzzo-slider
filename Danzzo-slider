@@ -1,0 +1,256 @@
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, ChevronLeft, ChevronRight, Zap, Star } from 'lucide-react';
+
+export default function App() {
+  // ১. হিরো সেকশনের ডেটা (Reels/Coverflow Style)
+  const heroSlides = [
+    {
+      id: 1,
+      title: "প্রিমিয়াম ওভারসাইজড শার্ট",
+      category: "ফ্যাশন",
+      image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=800&q=80",
+    },
+    {
+      id: 2,
+      title: "স্মার্ট ওয়াচ আল্ট্রা",
+      category: "টেকনোলজি",
+      image: "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?w=800&q=80",
+    },
+    {
+      id: 3,
+      title: "ক্লাসিক ডেনিম জ্যাকেট",
+      category: "ফ্যাশন",
+      image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800&q=80",
+    },
+    {
+      id: 4,
+      title: "নয়েজ ক্যানসেলিং হেডফোন",
+      category: "টেকনোলজি",
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+    },
+    {
+      id: 5,
+      title: "আরবান স্ট্রিটওয়্যার হুডি",
+      category: "ফ্যাশন",
+      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
+    }
+  ];
+
+  // ২. হট ড্রপস ডেটা (সেকেন্ডারি স্লাইডার)
+  const hotDrops = [
+    { id: 1, title: "স্নিকার্স ভি১", price: "$120", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" },
+    { id: 2, title: "মেকানিক্যাল কীবোর্ড", price: "$85", image: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=500&q=80" },
+    { id: 3, title: "ভিন্টেজ সানগ্লাস", price: "$45", image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80" },
+    { id: 4, title: "ওয়্যারলেস ইয়ারবাড", price: "$99", image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80" },
+    { id: 5, title: "লেদার বুট", price: "$150", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=500&q=80" },
+    { id: 6, title: "গেমিং মাউস", price: "$60", image: "https://images.unsplash.com/photo-1527814050087-379381547938?w=500&q=80" },
+  ];
+
+  // ৩. ২০টি মিক্সড আইটেম (গ্রিড সেকশন)
+  const gridItems = Array.from({ length: 20 }).map((_, i) => ({
+    id: i + 1,
+    title: i % 2 === 0 ? `ডিজাইনার শার্ট ভলিউম ${i + 1}` : `স্মার্ট গ্যাজেট প্রো ${i + 1}`,
+    price: i % 2 === 0 ? `$${Math.floor(Math.random() * 50 + 20)}.00` : `$${Math.floor(Math.random() * 200 + 50)}.00`,
+    category: i % 2 === 0 ? "ফ্যাশন" : "টেক",
+    image: i % 2 === 0 
+      ? `https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80&sig=${i}` 
+      : `https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500&q=80&sig=${i}`
+  }));
+
+  // হিরো স্লাইডার লজিক
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 3500); // প্রতি ৩.৫ সেকেন্ডে স্লাইড চেঞ্জ হবে
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  const handleNext = () => setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+  const handlePrev = () => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+
+  // কভারফ্লো ক্লাসের জন্য ফাংশন
+  const getSlideClasses = (index) => {
+    if (index === activeSlide) return "translate-x-0 scale-100 z-20 opacity-100 shadow-2xl shadow-red-500/20";
+    if (index === (activeSlide + 1) % heroSlides.length) return "translate-x-[40%] md:translate-x-[60%] scale-90 z-10 opacity-50 blur-[2px]";
+    if (index === (activeSlide - 1 + heroSlides.length) % heroSlides.length) return "-translate-x-[40%] md:-translate-x-[60%] scale-90 z-10 opacity-50 blur-[2px]";
+    return "opacity-0 scale-50 z-0 hidden";
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans overflow-x-hidden selection:bg-[#ff6b6b] selection:text-white">
+      
+      {/* নেভিগেশন বার (সিম্পল) */}
+      <nav className="fixed top-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-gray-800 p-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-black tracking-wider uppercase">
+            Danzzo<span className="text-[#ff6b6b]">.xyz</span>
+          </h1>
+          <button className="relative p-2">
+            <ShoppingCart className="w-6 h-6" />
+            <span className="absolute top-0 right-0 bg-[#ff6b6b] text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* =========================================
+          ১. হিরো সেকশন (3D Coverflow Reels Style)
+          ========================================= */}
+      <section className="relative w-full h-[95vh] flex flex-col justify-center items-center overflow-hidden pt-16 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#0a0a0a] to-[#0a0a0a]">
+        
+        {/* ব্যাকগ্রাউন্ড গ্লো */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ff6b6b] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+
+        <div className="text-center z-30 mb-8 mt-10">
+          <h2 className="text-sm md:text-base text-gray-400 tracking-[0.3em] uppercase mb-2">The New Era of Lifestyle</h2>
+          <p className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">যেখানে ফ্যাশন ও টেকনোলজির মিলন</p>
+        </div>
+
+        {/* 3D স্লাইডার কন্টেইনার */}
+        <div className="relative w-full max-w-5xl h-[450px] md:h-[550px] flex justify-center items-center perspective-1000">
+          
+          <button onClick={handlePrev} className="absolute left-4 md:left-10 z-30 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          {heroSlides.map((slide, index) => (
+            <div 
+              key={slide.id}
+              className={`absolute w-[280px] md:w-[350px] h-[400px] md:h-[500px] rounded-2xl overflow-hidden transition-all duration-500 ease-in-out border border-gray-800 ${getSlideClasses(index)}`}
+            >
+              <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
+              
+              {/* কার্ডের ভেতরের কন্টেন্ট */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-6">
+                <span className="bg-[#ff6b6b] text-white text-xs font-bold px-2 py-1 rounded w-max mb-2">
+                  {slide.category}
+                </span>
+                <h3 className="text-2xl font-bold text-white leading-tight">{slide.title}</h3>
+                <button className="mt-4 bg-white text-black px-6 py-2.5 rounded-full font-bold hover:bg-[#ff6b6b] hover:text-white transition-all transform hover:scale-105 w-max">
+                  শপ নাও
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <button onClick={handleNext} className="absolute right-4 md:right-10 z-30 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full transition">
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+        
+        {/* ডটস ইন্ডিকেটর */}
+        <div className="flex gap-2 mt-6 z-20">
+          {heroSlides.map((_, i) => (
+            <button 
+              key={i} 
+              onClick={() => setActiveSlide(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${i === activeSlide ? 'w-8 bg-[#ff6b6b]' : 'w-2 bg-gray-600 hover:bg-gray-400'}`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* =========================================
+          ২. আকর্ষণীয় সেকশন (Hot Drops Slider)
+          ========================================= */}
+      <section className="py-16 px-4 md:px-12 bg-[#121212] border-y border-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-end mb-8">
+            <div className="flex items-center gap-2">
+              <Zap className="w-8 h-8 text-[#ff6b6b]" />
+              <h2 className="text-2xl md:text-3xl font-bold">আকর্ষণীয় প্রোডাক্ট</h2>
+            </div>
+            <button className="text-sm text-gray-400 hover:text-[#ff6b6b] transition border-b border-transparent hover:border-[#ff6b6b]">সব দেখুন ➔</button>
+          </div>
+
+          {/* হরাইজন্টাল স্ক্রলিং স্লাইডার (Native CSS Snap) */}
+          <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+            {hotDrops.map((item) => (
+              <div key={item.id} className="min-w-[200px] md:min-w-[250px] snap-start bg-[#1a1a1a] rounded-xl overflow-hidden group cursor-pointer border border-gray-800 hover:border-gray-500 transition-colors duration-300">
+                <div className="h-[250px] md:h-[300px] overflow-hidden relative">
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-3 right-3 bg-[#ff6b6b] text-white text-[10px] font-black px-2 py-1 rounded tracking-wider">NEW</div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-base md:text-lg text-white group-hover:text-[#ff6b6b] transition-colors">{item.title}</h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-gray-300 font-bold">{item.price}</p>
+                    <button className="bg-white/10 p-2 rounded-full hover:bg-white hover:text-black transition">
+                      <ShoppingCart className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          ৩. ২০টি আইটেমের মিক্সড গ্রিড সেকশন
+          ========================================= */}
+      <section className="py-20 px-4 md:px-12 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 flex justify-center items-center gap-3">
+              <Star className="w-8 h-8 text-[#ff6b6b]" fill="#ff6b6b" /> 
+              আপনার জন্য স্পেশাল
+            </h2>
+            <p className="text-gray-400">বেস্ট সেলিং ফ্যাশন এবং টেকনোলজি আইটেমগুলো একসাথে</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">
+            {gridItems.map((item) => (
+              <div key={item.id} className="bg-[#141414] rounded-lg overflow-hidden border border-gray-800 hover:border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,107,0.1)] hover:-translate-y-1 transition-all duration-300">
+                
+                {/* ইমেজ এরিয়া */}
+                <div className="aspect-[3/4] overflow-hidden relative group">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  />
+                  {/* ব্যাজ */}
+                  <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-[10px] font-bold px-2 py-1 rounded text-gray-200 border border-gray-700">
+                    {item.category}
+                  </div>
+                  
+                  {/* হোভার কুইক অ্যাড বাটন */}
+                  <div className="absolute bottom-[-50px] group-hover:bottom-2 left-2 right-2 transition-all duration-300">
+                    <button className="w-full bg-white/90 backdrop-blur text-black text-sm font-bold py-2 rounded shadow-lg hover:bg-[#ff6b6b] hover:text-white transition">
+                      কার্টে যোগ করুন
+                    </button>
+                  </div>
+                </div>
+                
+                {/* টেক্সট এরিয়া */}
+                <div className="p-3 md:p-4">
+                  <h3 className="text-xs md:text-sm font-medium text-gray-300 line-clamp-1">{item.title}</h3>
+                  <p className="font-bold text-white mt-1 text-sm md:text-base">{item.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Load More Button */}
+          <div className="mt-16 flex justify-center">
+            <button className="group relative px-8 py-3 bg-transparent overflow-hidden rounded-full border border-gray-600 transition-all">
+              <div className="absolute inset-0 w-0 bg-white transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+              <span className="relative text-white group-hover:text-black font-semibold text-sm tracking-wider uppercase transition-colors duration-300">
+                আরও দেখুন
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Footer (সিম্পল) */}
+      <footer className="border-t border-gray-900 bg-black py-10 text-center">
+        <h2 className="text-2xl font-black tracking-wider uppercase text-gray-600">Danzzo.xyz</h2>
+        <p className="text-gray-500 text-sm mt-2">© 2026 Danzzo. All rights reserved.</p>
+      </footer>
+
+    </div>
+  );
+}
