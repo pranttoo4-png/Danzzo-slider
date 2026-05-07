@@ -1,7 +1,10 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, ChevronLeft, ChevronRight, Zap, Star } from 'lucide-react';
 
 export default function App() {
+  // আপনার বাকি সব কোড ঠিক আগের মতোই হুবহু থাকবে...
   const heroSlides = [
     {
       id: 1,
